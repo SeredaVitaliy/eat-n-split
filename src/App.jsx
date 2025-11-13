@@ -24,7 +24,10 @@ export function App() {
     <div className="app">
       <div className="sidebar">
         <FriendList />
+        <FormAddFriend />
+        <Button>Добавить друга</Button>
       </div>
+      <FormSplitBill />
     </div>
   );
 }
@@ -58,8 +61,44 @@ function Friend({ friend }) {
         </p>
       )}
       {friend.balance === 0 && <p>Вы ничего не должны</p>}
-
-      <button className="button">Выбрать</button>
+      <Button>Выбрать</Button>
     </li>
+  );
+}
+
+function Button({ children }) {
+  return <button className="button">{children}</button>;
+}
+
+function FormAddFriend() {
+  return (
+    <form className="form-add-friend">
+      <label> Имя друга</label>
+      <input type="text" />
+      <label> image URL</label>
+      <input type="text" />
+      <Button>Добавить</Button>
+    </form>
+  );
+}
+
+function FormSplitBill() {
+  return (
+    <form className="form-split-bill">
+      <h2>Разделить счет с X</h2>
+      <label> Сумма счета</label>
+      <input type="text" />
+      <label> Твоя сумма</label>
+      <input type="text" />
+      <label> Сумма Х</label>
+      <input type="text" disabled />
+
+      <label>Кто оплачивает счет</label>
+      <select>
+        <option value="user">Ты</option>
+        <option value="friend">X</option>
+      </select>
+      <Button>Разделить счет</Button>
+    </form>
   );
 }
