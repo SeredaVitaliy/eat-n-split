@@ -1,24 +1,65 @@
 const initialFriends = [
   {
     id: 118836,
-    name: "Clark",
+    name: "Кларк",
     image: "https://i.pravatar.cc/48?u=118836",
-    balance: -7,
+    balance: -500,
   },
   {
     id: 933372,
-    name: "Sarah",
+    name: "Сара",
     image: "https://i.pravatar.cc/48?u=933372",
-    balance: 20,
+    balance: 1000,
   },
   {
     id: 499476,
-    name: "Anthony",
+    name: "Энтони",
     image: "https://i.pravatar.cc/48?u=499476",
     balance: 0,
   },
 ];
 
 export function App() {
-  return <div>d,sa.ldm</div>;
+  return (
+    <div className="app">
+      <div className="sidebar">
+        <FriendList />
+      </div>
+    </div>
+  );
+}
+
+function FriendList() {
+  const friends = initialFriends;
+
+  return (
+    <ul>
+      {friends.map((friend) => (
+        <Friend friend={friend} key={friend.id} />
+      ))}
+    </ul>
+  );
+}
+
+function Friend({ friend }) {
+  return (
+    <li>
+      <img src={friend.image} alt={friend.name} />
+      <h3>{friend.name}</h3>
+
+      {friend.balance < 0 && (
+        <p className="red">
+          Вы должны {friend.name} {Math.abs(friend.balance)}₽
+        </p>
+      )}
+      {friend.balance > 0 && (
+        <p className="green">
+          {friend.name} должен Вам {Math.abs(friend.balance)}₽
+        </p>
+      )}
+      {friend.balance === 0 && <p>Вы ничего не должны</p>}
+
+      <button className="button">Выбрать</button>
+    </li>
+  );
 }
