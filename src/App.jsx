@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { FriendList } from "./components/FriendList";
+import { FormAddFriend } from "./components/FormAddFriend";
+import { FormSplitBill } from "./components/FormSplitBill";
 
 const initialFriends = [
   {
@@ -21,7 +24,7 @@ const initialFriends = [
   },
 ];
 
-function Button({ children, onClick }) {
+export function Button({ children, onClick }) {
   return (
     <button className="button" onClick={onClick}>
       {children}
@@ -50,6 +53,19 @@ export function App() {
     );
     setShowAddFriend(false);
   }
+
+  function handleSplitBill(value) {
+    //добавление нового массива
+    setFriends((friends) =>
+      friends.map((friend) =>
+        friend.id === selectedFriends.id
+          ? { ...friend, balance: friend.balance + value }
+          : friend
+      )
+    );
+
+    setSelectedFriends(null);
+  }
   return (
     <div className="app">
       <div className="sidebar">
@@ -66,111 +82,12 @@ export function App() {
         </Button>
       </div>
 
-      {selectedFriends && <FormSplitBill selectedFriends={selectedFriends} />}
-    </div>
-  );
-}
-
-function FriendList({ friends, onSelection, selectedFriends }) {
-  return (
-    <ul>
-      {friends.map((friend) => (
-        <Friend
-          friend={friend}
-          key={friend.id}
-          onSelection={onSelection}
+      {selectedFriends && (
+        <FormSplitBill
           selectedFriends={selectedFriends}
+          onSplitBill={handleSplitBill}
         />
-      ))}
-    </ul>
-  );
-}
-
-function Friend({ friend, onSelection, selectedFriends }) {
-  const isSelected = selectedFriends?.id === friend.id;
-  console.log(friend);
-  return (
-    <li className={isSelected ? "selected" : ""}>
-      <img src={friend.image} alt={friend.name} />
-      <h3>{friend.name}</h3>
-
-      {friend.balance < 0 && (
-        <p className="red">
-          Вы должны {friend.name} {Math.abs(friend.balance)}₽
-        </p>
       )}
-      {friend.balance > 0 && (
-        <p className="green">
-          {friend.name} должен Вам {Math.abs(friend.balance)}₽
-        </p>
-      )}
-      {friend.balance === 0 && <p>Вы ничего не должны</p>}
-      <Button onClick={() => onSelection(friend)}>
-        {!isSelected ? "Выбрать" : "Закрыть"}
-      </Button>
-    </li>
-  );
-}
-
-function FormAddFriend({ onAddFriend }) {
-  const [name, setName] = useState("");
-  const [image, setImage] = useState("https://i.pravatar.cc/48");
-
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    if (!name || !image) return;
-
-    const id = crypto.randomUUID();
-    const newFriend = {
-      id,
-      name,
-      image: `${image}?=${id}`,
-      balance: 0,
-    };
-
-    onAddFriend(newFriend);
-
-    setImage("https://i.pravatar.cc/48");
-    setName("");
-  }
-
-  return (
-    <form className="form-add-friend" onSubmit={handleSubmit}>
-      <label> Имя друга</label>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <label> image URL</label>
-      <input
-        type="text"
-        value={image}
-        onChange={(e) => setImage(e.target.value)}
-      />
-      <Button>Добавить</Button>
-    </form>
-  );
-}
-
-function FormSplitBill({ selectedFriends }) {
-  return (
-    <form className="form-split-bill">
-      <h2>Разделить счет с {selectedFriends.name}</h2>
-      <label> Сумма счета</label>
-      <input type="text" />
-      <label> Твоя сумма</label>
-      <input type="text" />
-      <label> Сумма {selectedFriends.name}</label>
-      <input type="text" disabled />
-
-      <label>Кто оплачивает счет</label>
-      <select>
-        <option value="user">Ты</option>
-        <option value="friend">{selectedFriends.name}</option>
-      </select>
-      <Button>Разделить счет</Button>
-    </form>
+    </div>
   );
 }
